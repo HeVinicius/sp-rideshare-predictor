@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-03-18T10:43:03.623182",
+  "hour": 10,
+  "weekday": 2,
+  "weather": {
+    "coord": {
+      "lon": -46.6333,
+      "lat": -23.5505
+    },
+    "weather": [
+      {
+        "id": 800,
+        "main": "Clear",
+        "description": "céu limpo",
+        "icon": "01d"
+      }
+    ],
+    "base": "stations",
+    "main": {
+      "temp": 25.88,
+      "feels_like": 26.27,
+      "temp_min": 25.57,
+      "temp_max": 26.15,
+      "pressure": 1014,
+      "humidity": 67,
+      "sea_level": 1014,
+      "grnd_level": 925
+    },
+    "visibility": 10000,
+    "wind": {
+      "speed": 2.06,
+      "deg": 100
+    },
+    "clouds": {
+      "all": 0
+    },
+    "dt": 1773841126,
+    "sys": {
+      "type": 1,
+      "id": 8394,
+      "country": "BR",
+      "sunrise": 1773824963,
+      "sunset": 1773868792
+    },
+    "timezone": -10800,
+    "id": 3458611,
+    "name": "Liberdade",
+    "cod": 200
+  }
+}

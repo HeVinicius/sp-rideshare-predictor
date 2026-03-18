@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-03-18T14:11:47.583590",
+  "hour": 14,
+  "weekday": 2,
+  "score": 100,
+  "weather": {
+    "coord": {
+      "lon": -46.6333,
+      "lat": -23.5505
+    },
+    "weather": [
+      {
+        "id": 803,
+        "main": "Clouds",
+        "description": "nublado",
+        "icon": "04d"
+      }
+    ],
+    "base": "stations",
+    "main": {
+      "temp": 29.98,
+      "feels_like": 34.75,
+      "temp_min": 29.15,
+      "temp_max": 30.55,
+      "pressure": 1013,
+      "humidity": 69,
+      "sea_level": 1013,
+      "grnd_level": 922
+    },
+    "visibility": 10000,
+    "wind": {
+      "speed": 4.12,
+      "deg": 160
+    },
+    "clouds": {
+      "all": 75
+    },
+    "dt": 1773853693,
+    "sys": {
+      "type": 2,
+      "id": 2082654,
+      "country": "BR",
+      "sunrise": 1773824963,
+      "sunset": 1773868792
+    },
+    "timezone": -10800,
+    "id": 3458611,
+    "name": "Liberdade",
+    "cod": 200
+  },
+  "traffic": {
+    "erro": "Expecting value: line 1 column 1 (char 0)",
+    "trechos_lentos": 0,
+    "percentual_lento": 0
+  }
+}

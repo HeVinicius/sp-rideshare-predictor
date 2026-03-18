@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-03-18T14:32:30.036307",
+  "hour": 14,
+  "weekday": 2,
+  "score": 80,
+  "weather": {
+    "cod": 401,
+    "message": "Invalid API key. Please see https://openweathermap.org/faq#error401 for more info."
+  },
+  "traffic": {
+    "velocidade_atual_kmh": 37,
+    "velocidade_livre_kmh": 54,
+    "percentual_lento": 31.5,
+    "confianca": 1,
+    "fonte": "TomTom"
+  }
+}
