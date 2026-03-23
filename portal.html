@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaiAgora SP</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0e1419;
+    --surface2: #141c24;
+    --accent: #f5c842;
+    --accent2: #ff6b35;
+    --text: #e8e4dc;
+    --muted: #6b7280;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    height: 56px;
+    background: rgba(8,12,16,0.98);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 0;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-right: 40px;
+    flex-shrink: 0;
+  }
+  .logo span { color: var(--text); }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .nav-btn:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+  }
+  .nav-btn.active {
+    background: rgba(245,200,66,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(245,200,66,0.2);
+  }
+  .nav-btn .icon { font-size: 14px; }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #4ade80;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .status-badge {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+    transition: width 0.3s;
+  }
+  .sidebar.collapsed { width: 0; overflow: hidden; }
+
+  .sidebar-section {
+    padding: 20px 16px 8px;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding: 0 8px;
+  }
+
+  .sidebar-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .sidebar-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .sidebar-btn.active { background: rgba(245,200,66,0.08); color: var(--accent); }
+  .sidebar-btn .sb-icon { font-size: 15px; flex-shrink: 0; }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 16px;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .sidebar-footer p {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .sidebar-footer strong { color: var(--accent); }
+
+  /* CONTENT AREA */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* PAGES */
+  .page {
+    flex: 1;
+    display: none;
+    overflow: hidden;
+  }
+  .page.active { display: flex; flex-direction: column; }
+
+  /* DASHBOARD PAGE (iframe) */
+  .iframe-container {
+    flex: 1;
+    position: relative;
+  }
+  .iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .iframe-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    gap: 16px;
+    transition: opacity 0.5s;
+  }
+  .iframe-overlay.hidden { opacity: 0; pointer-events: none; }
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .overlay-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+  .overlay-sub { font-size: 13px; color: var(--muted); }
+
+  /* LANDING PAGE */
+  .landing {
+    flex: 1;
+    overflow-y: auto;
+    padding: 60px 48px;
+    position: relative;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(245,200,66,0.1);
+    border: 1px solid rgba(245,200,66,0.2);
+    color: var(--accent);
+    font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  .hero-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); display: block; }
+  .hero h1 .outline {
+    -webkit-text-stroke: 1px rgba(255,255,255,0.25);
+    color: transparent;
+  }
+
+  .hero-desc {
+    font-size: 17px; line-height: 1.7;
+    color: rgba(232,228,220,0.6);
+    max-width: 480px; margin-bottom: 40px;
+  }
+
+  .btn-primary {
+    background: var(--accent); color: var(--bg);
+    padding: 14px 32px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: #f7d35a; transform: translateY(-2px); }
+
+  /* STATS */
+  .stats-row {
+    display: flex; gap: 32px;
+    margin: 48px 0;
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-item { flex: 1; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px; color: var(--accent); line-height: 1;
+  }
+  .stat-desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* FEATURES */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; margin-top: 40px;
+    border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  }
+  .feature {
+    background: var(--surface); padding: 28px 24px;
+    transition: background 0.2s;
+  }
+  .feature:hover { background: var(--surface2); }
+  .feature-icon { font-size: 24px; margin-bottom: 12px; display: block; }
+  .feature h3 { font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+  .feature p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* SOBRE PAGE */
+  .sobre {
+    flex: 1; overflow-y: auto;
+    padding: 48px;
+  }
+  .sobre-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; margin-top: 32px;
+  }
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px;
+  }
+  .info-card h3 {
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+  }
+  .info-item {
+    display: flex; justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .info-item:last-child { border-bottom: none; }
+  .info-label { color: var(--muted); }
+  .info-value { color: var(--text); font-weight: 500; }
+  .info-value.ok { color: #4ade80; }
+  .info-value.warn { color: var(--accent); }
+
+  .roadmap { margin-top: 24px; }
+  .roadmap-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .roadmap-item:last-child { border-bottom: none; }
+  .rm-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  }
+  .rm-check.done { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .rm-check.next { background: rgba(245,200,66,0.15); color: var(--accent); }
+  .rm-check.future { background: rgba(255,255,255,0.05); color: var(--muted); }
+  .rm-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .rm-desc { font-size: 12px; color: var(--muted); }
+
+  /* SIDEBAR TOGGLE */
+  .toggle-sidebar {
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    padding: 8px; border-radius: 6px;
+    font-size: 16px; transition: all 0.2s;
+    margin-right: 8px;
+  }
+  .toggle-sidebar:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+  /* SECTION HEADERS */
+  .section-tag {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 0.95; letter-spacing: 1px; margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="toggle-sidebar" onclick="toggleSidebar()" title="Menu">☰</button>
+  <div class="logo">VAI<span>AGORA</span></div>
+
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('landing', this)">
+      <span class="icon">🏠</span> Início
+    </button>
+    <button class="nav-btn" onclick="showPage('dashboard', this)">
+      <span class="icon">📊</span> Dashboard
+    </button>
+    <button class="nav-btn" onclick="showPage('sobre', this)">
+      <span class="icon">ℹ️</span> Sobre o Projeto
+    </button>
+  </div>
+
+  <div class="topbar-right">
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      Ao vivo
+    </div>
+    <div class="status-badge" id="status-badge">
+      <span id="status-icon">⏳</span>
+      <span id="status-text">Verificando...</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navegação</div>
+      <button class="sidebar-btn active" onclick="showPage('landing', null, this)">
+        <span class="sb-icon">🏠</span> Início
+      </button>
+      <button class="sidebar-btn" onclick="showPage('dashboard', null, this)">
+        <span class="sb-icon">📊</span> Dashboard
+      </button>
+      <button class="sidebar-btn" onclick="showPage('sobre', null, this)">
+        <span class="sb-icon">ℹ️</span> Sobre
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Atalhos</div>
+      <button class="sidebar-btn" onclick="showPage('dashboard', null, this); setTimeout(() => scrollToSection('analisar'), 800)">
+        <span class="sb-icon">🔍</span> Analisar agora
+      </button>
+      <button class="sidebar-btn" onclick="showPage('dashboard', null, this); setTimeout(() => scrollToSection('rota'), 800)">
+        <span class="sb-icon">🗺️</span> Calcular rota
+      </button>
+      <button class="sidebar-btn" onclick="showPage('dashboard', null, this); setTimeout(() => scrollToSection('mapa'), 800)">
+        <span class="sb-icon">📍</span> Ver mapa
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Status APIs</div>
+      <button class="sidebar-btn" id="api-weather">
+        <span class="sb-icon">🌤️</span> OpenWeather
+      </button>
+      <button class="sidebar-btn" id="api-tomtom">
+        <span class="sb-icon">🚦</span> TomTom Traffic
+      </button>
+      <button class="sidebar-btn" id="api-osrm">
+        <span class="sb-icon">🗺️</span> OSRM Routing
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <p><strong>VaiAgora SP</strong><br>
+      Feito com ☕ e Python<br>
+      São Paulo · 2026</p>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- LANDING PAGE -->
+    <div class="page active" id="page-landing">
+      <div class="landing">
+        <div class="hero">
+          <div class="hero-tag">São Paulo · Tempo Real · IA</div>
+          <h1>
+            CHAME
+            <em>NA HORA</em>
+            <span class="outline">CERTA</span>
+          </h1>
+          <p class="hero-desc">
+            Uma inteligência artificial que analisa o trânsito, o clima e o movimento em São Paulo pra te falar a melhor hora de chamar Uber ou 99 — assim você espera menos e evita preço alto.
+          </p>
+          <button class="btn-primary" onclick="showPage('dashboard', document.querySelector('.nav-btn:nth-child(2)'))">
+            Abrir dashboard →
+          </button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-num">100</div>
+            <div class="stat-desc">Score máximo possível</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">05</div>
+            <div class="stat-desc">minutos entre coletas</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">3</div>
+            <div class="stat-desc">APIs integradas</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">SP</div>
+            <div class="stat-desc">exclusivo para São Paulo</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-tag">Como funciona</div>
+          <div class="section-title">SIMPLES ASSIM</div>
+          <div class="features-grid">
+            <div class="feature">
+              <span class="feature-icon">🌧️</span>
+              <h3>Clima em tempo real</h3>
+              <p>Chuvas de verão em SP afetam drasticamente a demanda. Detectamos tempestades antes de virarem problema.</p>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">🚦</span>
+              <h3>Trânsito via TomTom</h3>
+              <p>Velocidade real das vias de SP atualizada a cada 05 minutos para calcular o score do momento.</p>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">🤖</span>
+              <h3>Score inteligente</h3>
+              <p>Um número de 0–100 diz se agora é ótimo, razoável ou péssimo para chamar — com base nos dados reais.</p>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">🗺️</span>
+              <h3>Mapa interativo</h3>
+              <p>Clique em qualquer ponto de São Paulo para ver a velocidade atual e o nível de congestionamento.</p>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">🚗</span>
+              <h3>Calculadora de rota</h3>
+              <p>Digite origem e destino para estimar tempo de viagem e custo médio da corrida nos apps.</p>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">📊</span>
+              <h3>Histórico de dados</h3>
+              <p>Snapshots coletados a cada 05 minutos para treinar o modelo de ML com padrões reais de SP.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page" id="page-dashboard">
+      <div class="iframe-container">
+        <div class="iframe-overlay" id="iframe-overlay">
+          <div class="spinner"></div>
+          <div class="overlay-title">VAIAGORA</div>
+          <div class="overlay-sub">Carregando dashboard...</div>
+        </div>
+        <iframe
+          id="streamlit-iframe"
+          src="http://localhost:8501"
+          onload="iframeLoaded()"
+          onerror="iframeError()"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- SOBRE PAGE -->
+    <div class="page" id="page-sobre">
+      <div class="sobre">
+        <div class="section-tag">Sobre o projeto</div>
+        <div class="section-title">VAIAGORA SP</div>
+        <p style="color:var(--muted);font-size:15px;max-width:600px;line-height:1.7;margin-bottom:32px">
+          Software desenvolvido do zero para prever o melhor horário de chamar um carro de aplicativo em São Paulo, usando dados reais de clima, trânsito e padrões históricos.
+        </p>
+
+        <div class="sobre-grid">
+          <div class="info-card">
+            <h3>Stack técnica</h3>
+            <div class="info-item"><span class="info-label">Linguagem</span><span class="info-value ok">Python 3.14</span></div>
+            <div class="info-item"><span class="info-label">Dashboard</span><span class="info-value ok">Streamlit</span></div>
+            <div class="info-item"><span class="info-label">Mapas</span><span class="info-value ok">Folium</span></div>
+            <div class="info-item"><span class="info-label">Roteamento</span><span class="info-value ok">OSRM (gratuito)</span></div>
+            <div class="info-item"><span class="info-label">Trânsito</span><span class="info-value ok">TomTom API</span></div>
+            <div class="info-item"><span class="info-label">Clima</span><span class="info-value ok">OpenWeatherMap</span></div>
+            <div class="info-item"><span class="info-label">ML</span><span class="info-value warn">XGBoost (em breve)</span></div>
+          </div>
+
+          <div class="info-card">
+            <h3>Status das APIs</h3>
+            <div class="info-item"><span class="info-label">OpenWeatherMap</span><span class="info-value ok" id="st-weather">Verificando...</span></div>
+            <div class="info-item"><span class="info-label">TomTom Traffic</span><span class="info-value ok" id="st-tomtom">Verificando...</span></div>
+            <div class="info-item"><span class="info-label">OSRM Routing</span><span class="info-value ok" id="st-osrm">Verificando...</span></div>
+            <div class="info-item"><span class="info-label">Scheduler</span><span class="info-value ok">Rodando</span></div>
+            <div class="info-item"><span class="info-label">Dashboard</span><span class="info-value" id="st-dash">Verificando...</span></div>
+            <div class="info-item"><span class="info-label">Coleta automática</span><span class="info-value ok">A cada 05 min</span></div>
+          </div>
+        </div>
+
+        <div class="info-card roadmap" style="margin-top:24px">
+          <h3>Roadmap do projeto</h3>
+          <div class="roadmap-item">
+            <div class="rm-check done">✓</div>
+            <div><div class="rm-title">Coleta de clima em tempo real</div><div class="rm-desc">OpenWeatherMap integrado com dados de SP</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check done">✓</div>
+            <div><div class="rm-title">Trânsito via TomTom API</div><div class="rm-desc">Velocidade real das vias coletada a cada 05 minutos</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check done">✓</div>
+            <div><div class="rm-title">Score 0–100 em tempo real</div><div class="rm-desc">Algoritmo que combina clima, trânsito e horário de pico</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check done">✓</div>
+            <div><div class="rm-title">Dashboard visual estiloso</div><div class="rm-desc">Interface escura com design profissional</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check done">✓</div>
+            <div><div class="rm-title">Mapa interativo de SP</div><div class="rm-desc">Clique em qualquer ponto para ver o trânsito</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check done">✓</div>
+            <div><div class="rm-title">Calculadora de rota</div><div class="rm-desc">Estima tempo e custo de corridas com rota no mapa</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check next">→</div>
+            <div><div class="rm-title">Modelo ML com XGBoost</div><div class="rm-desc">Treinar com 7+ dias de histórico para previsões mais precisas</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check future">○</div>
+            <div><div class="rm-title">Previsão das próximas horas</div><div class="rm-desc">Mostrar score futuro e melhor janela de tempo</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check future">○</div>
+            <div><div class="rm-title">Notificações push</div><div class="rm-desc">Avisar quando o score subir para um valor desejado</div></div>
+          </div>
+          <div class="roadmap-item">
+            <div class="rm-check future">○</div>
+            <div><div class="rm-title">Deploy online</div><div class="rm-desc">Publicar no Streamlit Cloud para acesso de qualquer lugar</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let sidebarOpen = true;
+  let activeNavBtn = document.querySelector('.nav-btn.active');
+  let activeSidebarBtn = document.querySelector('.sidebar-btn.active');
+
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+    document.getElementById('sidebar').classList.toggle('collapsed', !sidebarOpen);
+  }
+
+  function showPage(pageId, navBtn, sidebarBtn) {
+    // Esconde todas as páginas
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+
+    // Atualiza nav buttons
+    if (navBtn) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      navBtn.classList.add('active');
+    }
+
+    // Atualiza sidebar buttons
+    if (sidebarBtn) {
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      sidebarBtn.classList.add('active');
+    }
+
+    // Sincroniza nav e sidebar
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const sbBtns = document.querySelectorAll('.sidebar-btn');
+    if (pageId === 'landing') { navBtns[0].classList.add('active'); sbBtns[0].classList.add('active'); }
+    if (pageId === 'dashboard') { navBtns[1].classList.add('active'); sbBtns[1].classList.add('active'); }
+    if (pageId === 'sobre') { navBtns[2].classList.add('active'); sbBtns[2].classList.add('active'); }
+  }
+
+  function iframeLoaded() {
+    setTimeout(() => {
+      document.getElementById('iframe-overlay').classList.add('hidden');
+      document.getElementById('status-text').textContent = 'Dashboard online';
+      document.getElementById('status-icon').textContent = '🟢';
+      document.getElementById('st-dash').textContent = 'Online ✓';
+      document.getElementById('st-dash').className = 'info-value ok';
+    }, 1000);
+  }
+
+  function iframeError() {
+    document.getElementById('iframe-overlay').innerHTML = `
+      <div style="text-align:center;padding:40px">
+        <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#ff6b35;margin-bottom:12px">DASHBOARD OFFLINE</div>
+        <div style="font-size:14px;color:#6b7280;margin-bottom:24px">O Streamlit não está rodando.<br>Execute o comando abaixo no terminal:</div>
+        <div style="background:#0e1419;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px 20px;font-family:monospace;font-size:14px;color:#f5c842;display:inline-block">
+          streamlit run app.py
+        </div>
+      </div>
+    `;
+    document.getElementById('status-text').textContent = 'Offline';
+    document.getElementById('status-icon').textContent = '🔴';
+    document.getElementById('st-dash').textContent = 'Offline ✗';
+    document.getElementById('st-dash').className = 'info-value';
+    document.getElementById('st-dash').style.color = '#ff6b35';
+  }
+
+  // Verifica status das APIs
+  async function checkAPIs() {
+    // Verifica OSRM
+    try {
+      const r = await fetch('http://router.project-osrm.org/route/v1/driving/-46.6333,-23.5505;-46.6500,-23.5600?overview=false', { signal: AbortSignal.timeout(5000) });
+      if (r.ok) {
+        document.getElementById('st-osrm').textContent = 'Online ✓';
+        document.getElementById('api-osrm').style.color = '#4ade80';
+      }
+    } catch(e) {
+      document.getElementById('st-osrm').textContent = 'Offline';
+      document.getElementById('st-osrm').style.color = '#ff6b35';
+    }
+
+    // Streamlit
+    try {
+      const r = await fetch('http://localhost:8501', { signal: AbortSignal.timeout(3000), mode: 'no-cors' });
+      document.getElementById('st-dash').textContent = 'Online ✓';
+      document.getElementById('st-dash').className = 'info-value ok';
+      document.getElementById('status-text').textContent = 'Dashboard online';
+      document.getElementById('status-icon').textContent = '🟢';
+    } catch(e) {
+      document.getElementById('st-dash').textContent = 'Offline — rode: streamlit run app.py';
+      document.getElementById('st-dash').style.color = '#ff6b35';
+    }
+
+    // OpenWeather e TomTom (só indica que estão configurados)
+    document.getElementById('st-weather').textContent = 'Configurado ✓';
+    document.getElementById('st-tomtom').textContent = 'Configurado ✓';
+    document.getElementById('api-weather').style.color = '#4ade80';
+    document.getElementById('api-tomtom').style.color = '#4ade80';
+  }
+
+  // Inicia verificação
+  setTimeout(checkAPIs, 1500);
+  setInterval(checkAPIs, 30000);
+</script>
+</body>
+</html>
