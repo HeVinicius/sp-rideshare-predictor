@@ -10,7 +10,6 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 
-# 🔥 IMPORT CORRETO DO DATABASE
 from src.database import salvar_snapshot
 
 load_dotenv()
@@ -18,9 +17,7 @@ load_dotenv()
 SP_LAT = os.getenv("SP_LAT", "-23.5505")
 SP_LON = os.getenv("SP_LON", "-46.6333")
 
-# =========================
-# 🌤️ CLIMA
-# =========================
+#clima 
 def get_weather_sp():
     key = os.getenv("OPENWEATHER_API_KEY")
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={SP_LAT}&lon={SP_LON}&appid={key}&units=metric&lang=pt_br"
@@ -65,9 +62,7 @@ def get_traffic_tomtom():
             "velocidade_livre_kmh": 0
         }
 
-# =========================
-# 🧠 SCORE
-# =========================
+#calculo score
 def calcular_score(weather, traffic):
     score = 100
 
@@ -97,9 +92,8 @@ def calcular_score(weather, traffic):
 
     return max(0, min(100, score))
 
-# =========================
-# 📦 COLETA
-# =========================
+#Coleta infos
+
 def collect_snapshot():
     now = datetime.now()
 
@@ -121,14 +115,14 @@ def collect_snapshot():
         "traffic": traffic
     }
 
-    # 💾 Salva JSON local
+    #Salva JSON local
     os.makedirs("data/raw", exist_ok=True)
     fname = f"data/raw/snap_{now.strftime('%Y%m%d_%H%M')}.json"
 
     with open(fname, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    # 💾 Salva no banco
+    #Salva no banco
     salvar_snapshot(data)
 
     print(
@@ -138,8 +132,5 @@ def collect_snapshot():
         f"Lento: {traffic.get('percentual_lento', 0)}%"
     )
 
-# =========================
-# ▶️ EXECUÇÃO DIRETA
-# =========================
 if __name__ == "__main__":
     collect_snapshot()

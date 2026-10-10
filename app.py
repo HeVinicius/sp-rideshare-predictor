@@ -1,14 +1,11 @@
 import sys
 import os
 
-# 🔥 GARANTE QUE O PYTHON ENXERGUE A PASTA DO PROJETO
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 
-# 🔥 (EXTRA) garante acesso à pasta src explicitamente
 sys.path.append(os.path.join(BASE_DIR, "src"))
 
-# IMPORTS
 import streamlit as st
 import json
 import folium
@@ -18,7 +15,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from geopy.geocoders import Nominatim
 
-# 🔥 IMPORTS INTERNOS (depois do path!)
+#  Imports internos (depois do path!)
 from src.collector import get_weather_sp, get_traffic_tomtom, calcular_score
 from src.database import (
     salvar_snapshot, salvar_rota, salvar_clique_mapa,
@@ -26,7 +23,7 @@ from src.database import (
     buscar_historico_rotas, get_connection
 )
 
-# LOAD ENV
+# env carregamento e importação de fonts
 load_dotenv()
 
 
@@ -102,7 +99,7 @@ hr { border-color: rgba(255,255,255,0.07) !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# HEADER
+#header
 st.markdown("""
 <div class='live-tag'>● São Paulo · Tempo Real · IA</div>
 <div class='vai-title'>VAI<span>AGORA</span></div>
@@ -113,7 +110,7 @@ st.markdown("""
 
 st.divider()
 
-# ANÁLISE
+#analise duvidosa
 col_btn, _ = st.columns([1, 3])
 with col_btn:
     analisar = st.button("Analisar agora")
@@ -163,20 +160,20 @@ if st.session_state.analise:
 
     col1, col2, col3, col4 = st.columns(4)
     if "main" in weather:
-        col1.metric("🌡️ Temperatura", f"{weather['main']['temp']:.1f}°C")
-        col2.metric("💧 Umidade", f"{weather['main']['humidity']}%")
-        col3.metric("🌤️ Clima", weather['weather'][0]['description'].capitalize())
+        col1.metric(" Temperatura", f"{weather['main']['temp']:.1f}°C")
+        col2.metric(" Umidade", f"{weather['main']['humidity']}%")
+        col3.metric(" Clima", weather['weather'][0]['description'].capitalize())
     col4.metric("🚦 Velocidade atual", f"{traffic.get('velocidade_atual_kmh', 0)} km/h")
 
     hora = datetime.now().hour
     if hora in range(7, 10):
-        st.markdown("<div class='alerta'>⚠️ Horário de pico da manhã em SP (7h–9h). Considere esperar.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='alerta'> Horário de pico da manhã em SP (7h–9h). Considere esperar.</div>", unsafe_allow_html=True)
     elif hora in range(17, 21):
-        st.markdown("<div class='alerta'>⚠️ Horário de pico da tarde em SP (17h–20h). Considere esperar.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='alerta'> Horário de pico da tarde em SP (17h–20h). Considere esperar.</div>", unsafe_allow_html=True)
 
 st.divider()
 
-# CALCULADORA DE ROTA
+# calculo da rota
 st.markdown("<p style='font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#f5c842'>Calculadora</p>", unsafe_allow_html=True)
 st.markdown("<p style='font-family:Bebas Neue,sans-serif;font-size:32px;letter-spacing:1px'>SIMULAR MINHA CORRIDA</p>", unsafe_allow_html=True)
 st.markdown("<p style='color:#6b7280;font-size:14px;margin-bottom:20px'>Digite origem e destino para estimar tempo e custo da corrida.</p>", unsafe_allow_html=True)
@@ -225,14 +222,14 @@ with col_dest:
 
 col_calc, _ = st.columns([1, 3])
 with col_calc:
-    calcular = st.button("🚗 Calcular rota")
+    calcular = st.button(" Calcular rota")
 
 if calcular:
     loc_orig = st.session_state.coord_orig
     loc_dest = st.session_state.coord_dest
 
     if not loc_orig or not loc_dest:
-        st.warning("⚠️ Selecione origem e destino antes de calcular.")
+        st.warning(" Selecione origem e destino antes de calcular.")
     else:
         with st.spinner("Calculando rota..."):
             try:
@@ -291,10 +288,10 @@ if calcular:
                     salvar_rota(rota_data)
 
                 else:
-                    st.error("❌ Não foi possível calcular a rota.")
+                    st.error(" Não foi possível calcular a rota.")
 
             except Exception as e:
-                st.error(f"❌ Erro: {e}")
+                st.error(f" Erro: {e}")
 
 if st.session_state.rota_resultado:
     r = st.session_state.rota_resultado
@@ -332,7 +329,7 @@ if st.session_state.rota_resultado:
                 <div style='font-family:Bebas Neue,sans-serif;font-size:38px;color:#4ade80;line-height:1'>R$ {r['custo_min']:.0f} – {r['custo_max']:.0f}</div>
                 <div style='font-size:11px;color:#6b7280;margin-top:4px'>Uber / 99 / InDrive — tarifa padrão SP</div>
             </div>
-            <div style='font-size:11px;color:#6b7280;line-height:1.6'>💡 Valor pode variar com surge pricing, categoria e promoções.</div>
+            <div style='font-size:11px;color:#6b7280;line-height:1.6'> Valor pode variar com surge pricing, categoria e promoções.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -348,7 +345,7 @@ if st.session_state.rota_resultado:
 
 st.divider()
 
-# MAPA INTERATIVO
+# mapa
 st.markdown("<p style='font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#f5c842'>Mapa interativo</p>", unsafe_allow_html=True)
 st.markdown("<p style='font-family:Bebas Neue,sans-serif;font-size:32px;letter-spacing:1px'>CLIQUE NO MAPA PARA VER O TRÂNSITO</p>", unsafe_allow_html=True)
 st.markdown("<p style='color:#6b7280;font-size:14px;margin-bottom:20px'>Clique em qualquer ponto de São Paulo para consultar o trânsito em tempo real.</p>", unsafe_allow_html=True)
@@ -458,7 +455,7 @@ with col_resultado:
 
 st.divider()
 
-# HISTÓRICO DO BANCO
+# historico banco
 col_a, col_b = st.columns(2)
 
 with col_a:
@@ -498,20 +495,20 @@ with col_b:
             col_z.metric("Velocidade", f"{ultimo.get('velocidade_atual', '—')} km/h")
             st.markdown(f"""
             <div class='snap-card' style='color:#e8e4dc;margin-top:12px'>
-                🌤️ {str(ultimo.get('clima_desc', '—')).capitalize()} &nbsp;|&nbsp;
-                🌡️ {ultimo.get('temp', '—')}°C &nbsp;|&nbsp;
-                💧 {ultimo.get('umidade', '—')}%
+                 {str(ultimo.get('clima_desc', '—')).capitalize()} &nbsp;|&nbsp;
+                 {ultimo.get('temp', '—')}°C &nbsp;|&nbsp;
+                 {ultimo.get('umidade', '—')}%
             </div>
             """, unsafe_allow_html=True)
 
-        # Histórico de rotas
+        # historico da rota 
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#f5c842;margin-bottom:10px'>Últimas rotas calculadas</p>", unsafe_allow_html=True)
         rotas = buscar_historico_rotas(limit=3)
         for rota in rotas:
             st.markdown(f"""
             <div class='snap-card' style='color:#e8e4dc'>
-                🚗 {str(rota.get('origem',''))[:30]} → {str(rota.get('destino',''))[:30]}<br>
+                 {str(rota.get('origem',''))[:30]} → {str(rota.get('destino',''))[:30]}<br>
                 <span style='color:#6b7280;font-size:11px'>{rota.get('distancia_km')} km · {rota.get('tempo_min')} min · R$ {rota.get('custo_min'):.0f}–{rota.get('custo_max'):.0f}</span>
             </div>
             """, unsafe_allow_html=True)
@@ -522,6 +519,6 @@ st.divider()
 st.markdown("""
 <p style='text-align:center;color:#6b7280;font-size:13px'>
     <span style='font-family:Bebas Neue,sans-serif;color:#f5c842;font-size:18px'>VAIAGORA</span>
-    &nbsp;·&nbsp; Feito com ☕ e Python em SP &nbsp;·&nbsp; 2026
+    &nbsp;·&nbsp; Projeto feito com Claude, Crânio e Café &nbsp;·&nbsp; 2026
 </p>
 """, unsafe_allow_html=True)
