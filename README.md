@@ -1,6 +1,6 @@
 # VaiAgora SP
 
-Projeto em Python que analisa dados de clima e trânsito em São Paulo para ajudar a identificar bons horários para solicitar corridas de Uber e 99.
+Projeto em Python que analisa dados de clima, eventos e trânsito em São Paulo para ajudar a identificar bons horários para solicitar corridas de Uber e 99 baseado em análise preditiva.
 
 ## Funcionalidades
 
